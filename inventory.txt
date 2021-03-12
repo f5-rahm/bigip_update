@@ -1,0 +1,2 @@
+bigip1.my.local,BIGIP-15.x.x.x-y.y.y.iso
+bigip2.my.local,BIGIP-16.x.x.x-y.y.y.iso
