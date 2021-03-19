@@ -200,7 +200,7 @@ def upload_tmos(obj, host, image_name, image_iso):
         LOGGER.info(f"{get_time()} - Starting {image_name} upload to {host}")
         obj.upload("/mgmt/cm/autodeploy/software-image-uploads", image_iso)
         LOGGER.info(f"{get_time()} - {image_name} upload complete to {host}")
-        sleep(10)
+        sleep(30)
         if obj.exist(f"/mgmt/tm/sys/software/image/{image_name}.iso"):
             LOGGER.info(f"{get_time()} - {image_name} validated as present on {host}")
             return True

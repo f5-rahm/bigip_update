@@ -1,0 +1,88 @@
+ltm12
+	HD1.1	| 12.1.5	| inactive
+	HD1.2	| 12.1.5.2	| active
+	HD1.3	| None		| inactive
+
+	Available images
+	- BIGIP-12.1.5.2-0.0.10.iso
+	- BIGIP-12.1.5.3-0.0.5.iso (to install)
+
+ltm13
+	HD1.1	| 13.1.3	| inactive
+	HD1.2	| 13.1.3.4	| active
+
+	Available images - BIGIP-13.1.3.4-0.0.5.iso
+
+ltm14
+	HD1.1	| 14.1.2.7	| active
+
+	Available images - BIGIP-14.1.2.7-0.0.5.iso
+
+ltm15
+	HD1.1	| 15.1.0.5	| active
+
+	Available images - None
+
+
+
+Expected behavior:
+	- ltm12: verify config, create|download ucs, no upload, install to HD1.3, no copy of config or reboot
+	- ltm13: verify config, create|download ucs, no upload, no install, no copy of config or reboot
+	- ltm14: verify config, create|download ucs, upload, install to HD1.2, no copy of config or reboot
+	- ltm15: verify config, create|download ucs, no upload, install to HD1.2, no copy of config or reboot
+
+
+
+Notes
+ltm12
+- should not have gotten this message before installation finished: 2021-03-12 19:07:09 - BIGIP-12.1.5.3-0.0.5 installation status: complete
+- reword this, beginning installation message comes before the check to see if it's already there: 2021-03-12 19:28:01 - beginning BIGIP-12.1.5.3-0.0.5 install on HD1.3
+
+ltm13
+- won't exit the loop if there's a failure: BIGIP-13.1.3.6-0.0.4 installation status: failed (See /var/log/liveinstall.log)
+
+ltm14
+- sleep(10) wasn't long enough to check for the image (it was successful), but that's likely because of my slow test system with 4 LTMs running simultaneously
+
+
+----------
+New notes  3/18
+
+If the image is already present in /shared/images, note that
+If the image is already installed in active or inactive slot, note that and copy config (and if specified and standby) reboot
+Add error checking for failed ICR calls
+
+
+Goal -> 12.1.5.3-0.0.5
+Goal -> 13.1.3.6-0.0.4
+Goal -> 14.1.4-0.0.11
+Goal -> 15.1.2.1-0.0.10
+
+12.x system (active), software present
+HD1.2 -> 12.1.5.2 (active slot)
+HD1.3 -> 12.1.5.3 (inactive slot)
+
+13.x system (active), software missing
+HD1.2 -> 13.1.3.4 (active slot)
+
+14.x system (active), software present
+HD1.1 -> 14.1.2.7 (active slot)
+
+15.x system (active), software missing
+HD1.1 -> 15.1.0.5 (active slot)
+HD1.2 -> 15.1.2.1 (inactive slot)
+
+Expectations
+12.x
+Check HA status
+Verify config
+Generate UCS
+Upload Image
+
+
+
+Get All Volumes, check active, check image
+If image is correct and volume is active, do nothing
+if image is correct and volume is inactive:
+	If standby, install config to that image and reboot
+	If active, install config to that image and exit
